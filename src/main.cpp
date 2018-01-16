@@ -253,6 +253,7 @@ int main() {
 
 
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
+
           	//create a list of widely spaced (x,y) waypoints, evenly spaced at 30m
           	//later we will interpolate these waypoints with a spline and fill it in with more points that control speed.
           	vector<double> ptsx;
@@ -263,6 +264,17 @@ int main() {
           	double ref_x = car_x;
           	double ref_y = car_y;
           	double ref_yaw = deg2rad(car_yaw);
+
+          	//if the previous size is less than 2, use the car's current state
+          	if(prev_size<2){
+                //use two points that make the path tangent to the car
+                double prev_car_x = car_x - cos(car_yaw);
+                double prev_car_y = car_y - sin(car_yaw);
+
+                //push the points into the ptsx vector
+                ptsx.push_back(prev_car_y);
+
+          	}
 
           	double dist_inc = 0.3;
           	for(int i=0; i<50; i++){
