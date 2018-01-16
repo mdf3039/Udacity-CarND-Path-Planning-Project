@@ -281,8 +281,8 @@ int main() {
           	//else use the previous path's last two endpoints
           	else{
                 //Redefine reference state as previous path end point
-                ref_x = previous_path_x[prev_size-1];
-                ref_y = previous_path_y[prev_size-1];
+                //ref_x = previous_path_x[prev_size-1];
+                //ref_y = previous_path_y[prev_size-1];
                 //find the previous points before the reference point
                 double ref_x_prev = previous_path_x[prev_size-2];
                 double ref_y_prev = previous_path_y[prev_size-2];
@@ -311,6 +311,9 @@ int main() {
           	std::cout<<previous_path_y<<endl;
           	std::cout<<"Time "<<prev_size<<endl;
           	std::cout<<previous_path_x[0]<<endl;
+          	std::cout<<ref_x[0]<<endl;
+          	std::cout<<ref_y[0]<<endl;
+
 
           	// END
           	msgJson["next_x"] = next_x_vals;
