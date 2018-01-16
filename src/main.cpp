@@ -272,9 +272,32 @@ int main() {
                 double prev_car_y = car_y - sin(car_yaw);
 
                 //push the points into the ptsx vector
-                ptsx.push_back(prev_car_y);
-
+                ptsx.push_back(prev_car_x);
+                ptsx.push_back(car_x);
+                //push the points into the ptsy vector
+                ptsy.push_back(prev_car_y);
+                ptsy.push_back(car_y);
           	}
+          	//else use the previous path's last two endpoints
+          	else{
+                //Redefine reference state as previous path end point
+                ref_x = previous_path_x[prev_size-1];
+                ref_y = previous_path_y[prev_size-1];
+                //find the previous points before the reference point
+                double ref_x_prev = previous_path_x[prev_size-2];
+                double ref_y_prev = previous_path_y[prev_size-2];
+                ref_yaw = atan2(ref_y-ref_y_prev,ref_x-ref_x_prev);
+
+                //use two points that make the path tangent to the previous path's end point
+                //push the points into the ptsx vector
+                ptsx.push_back(ref_x_prev);
+                ptsx.push_back(ref_x);
+                //push the points into the ptsy vector
+                ptsy.push_back(ref_y_prev);
+                ptsy.push_back(ref_y);
+          	}
+          	std::cout<<previous_path_x<<endl;
+          	std::cout<<previous_path_y<<endl;
 
           	double dist_inc = 0.3;
           	for(int i=0; i<50; i++){
@@ -285,6 +308,10 @@ int main() {
                 next_x_vals.push_back(xy[0]);
                 next_y_vals.push_back(xy[1]);
           	}
+
+          	std::cout<<previous_path_x<<endl;
+          	std::cout<<previous_path_y<<endl;
+          	std::cout<<"Time "<<prev_size<<endl;
 
           	// END
           	msgJson["next_x"] = next_x_vals;
