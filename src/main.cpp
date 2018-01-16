@@ -296,8 +296,6 @@ int main() {
                 ptsy.push_back(ref_y_prev);
                 ptsy.push_back(ref_y);
           	}
-          	std::cout<<previous_path_x<<endl;
-          	std::cout<<previous_path_y<<endl;
 
           	double dist_inc = 0.3;
           	for(int i=0; i<50; i++){
@@ -312,6 +310,7 @@ int main() {
           	std::cout<<previous_path_x<<endl;
           	std::cout<<previous_path_y<<endl;
           	std::cout<<"Time "<<prev_size<<endl;
+          	std::cout<<previous_path_x[0]<<endl;
 
           	// END
           	msgJson["next_x"] = next_x_vals;
