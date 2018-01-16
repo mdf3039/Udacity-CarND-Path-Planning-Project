@@ -311,8 +311,8 @@ int main() {
           	std::cout<<previous_path_y<<endl;
           	std::cout<<"Time "<<prev_size<<endl;
           	std::cout<<previous_path_x[0]<<endl;
-          	std::cout<<ref_x[0]<<endl;
-          	std::cout<<ref_y[0]<<endl;
+          	std::cout<<ref_x<<endl;
+          	std::cout<<ref_y<<endl;
 
 
           	// END
