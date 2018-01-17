@@ -264,13 +264,14 @@ int main() {
                     //for a lane change
                     if((other_car_s>car_s) && ((other_car_s-car_s)<30)){
                         //change the reference velocity to the car's velocity ahead
-                        ref_vel = 25;//other_car_v;
+                        ref_vel = other_car_v-1;
                         //signal need for lane change
                         need_lane_change = true;
 
                     }
                 }
           	}
+          	std::cout<<"Reference Velocity: "<<ref_vel<<endl;
 
 
           	json msgJson;
