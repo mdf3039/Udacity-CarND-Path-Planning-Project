@@ -284,7 +284,7 @@ int main() {
                 //ref_x = previous_path_x[prev_size-1];
                 //ref_y = previous_path_y[prev_size-1];
                 //find the previous points before the reference point
-                double ref_x_prev = std::abs(previous_path_x[0]);
+                double ref_x_prev = previous_path_x[0];
                 double ref_y_prev = previous_path_y[0];
                 double ref_yaw_prev = atan2(ref_y_prev-ref_y,ref_x_prev-ref_x);
 
@@ -294,7 +294,7 @@ int main() {
                 //use two points that make the path tangent to the previous path's end point
                 //push the points into the ptsx vector
                 ptsx.push_back(ref_x);
-                ptsx.push_back(ref_x_prev);
+                ptsx.push_back(std::abs(ref_x_prev));
                 //push the points into the ptsy vector
                 ptsy.push_back(ref_y);
                 ptsy.push_back(ref_y_prev);
