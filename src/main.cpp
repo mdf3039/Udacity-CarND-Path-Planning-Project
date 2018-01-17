@@ -324,13 +324,13 @@ int main() {
           	//create a spline
           	tk::spline s;
 
-          	/*//output the vector ptsx
+          	//output the vector ptsx
           	std::cout<<"Before spline: [";
           	for(int i=0;i<ptsx.size(); i++){
                 std::cout<<ptsx[i]<<" , ";
           	}
           	std::cout<<" "<<endl;
-          	*/
+
 
           	//set (x,y) points to the spline
           	s.set_points(ptsx,ptsy);
