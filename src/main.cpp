@@ -268,8 +268,8 @@ int main() {
           	//if the previous size is less than 2, use the car's current state
           	if(prev_size<2){
                 //use two points that make the path tangent to the car
-                double prev_car_x = car_x + cos(car_yaw);
-                double prev_car_y = car_y + sin(car_yaw);
+                double prev_car_x = car_x + (cos(car_yaw)+.001);
+                double prev_car_y = car_y + (sin(car_yaw)+.001);
 
                 //push the points into the ptsx vector
                 ptsx.push_back(car_x);
