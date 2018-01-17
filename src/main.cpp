@@ -324,12 +324,13 @@ int main() {
           	//create a spline
           	tk::spline s;
 
-          	//output the vector ptsx
+          	/*//output the vector ptsx
           	std::cout<<"Before spline: [";
           	for(int i=0;i<ptsx.size(); i++){
                 std::cout<<ptsx[i]<<" , ";
           	}
           	std::cout<<" "<<endl;
+          	*/
 
           	//set (x,y) points to the spline
           	s.set_points(ptsx,ptsy);
@@ -351,25 +352,26 @@ int main() {
                 next_x_vals.push_back(spline_x);
                 next_y_vals.push_back(spline_y);
           	}
-          	//output the vector ptsx
+          	//output the vector next_x_vals
           	std::cout<<"[";
-          	for(int i=0;i<ptsx.size(); i++){
-                std::cout<<ptsx[i]<<" , ";
+          	for(int i=0;i<next_x_vals.size(); i++){
+                std::cout<<next_x_vals[i]<<" , ";
           	}
           	std::cout<<" "<<endl;
-          	//output the vector ptsy
+          	//output the vector next_y_vals
           	std::cout<<"[";
-          	for(int i=0;i<ptsy.size(); i++){
-                std::cout<<ptsy[i]<<" , ";
+          	for(int i=0;i<next_y_vals.size(); i++){
+                std::cout<<next_y_vals[i]<<" , ";
           	}
           	std::cout<<" "<<endl;
 
-          	//std::cout<<ptsx<<endl;
+          	/*//std::cout<<ptsx<<endl;
           	//std::cout<<ptsy<<endl;
           	std::cout<<"Time "<<prev_size<<endl;
           	std::cout<<ptsx[0]<<endl;
           	std::cout<<ref_x<<endl;
           	std::cout<<ref_y<<endl;
+          	*/
 
 
           	// END
