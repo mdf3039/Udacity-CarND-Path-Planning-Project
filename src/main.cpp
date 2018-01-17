@@ -301,8 +301,8 @@ int main() {
           	}
 
           	//In Frenet, add evenly dist_inc spaced points ahead of the starting reference
-          	double dist_inc = 2;
-          	for(int i=0; i<30; i++){
+          	double dist_inc = 20;
+          	for(int i=0; i<3; i++){
                 double next_s = car_s+(i+1)*dist_inc;
                 double next_d = (2+4*lane);
                 vector<double> xy = getXY(next_s, next_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
@@ -341,10 +341,10 @@ int main() {
                 next_y_vals.push_back(spline_y);
           	}
 
-          	std::cout<<previous_path_x<<endl;
-          	std::cout<<previous_path_y<<endl;
+          	std::cout<<ptsx<<endl;
+          	std::cout<<ptsy<<endl;
           	std::cout<<"Time "<<prev_size<<endl;
-          	std::cout<<previous_path_x[0]<<endl;
+          	std::cout<<ptsx[0]<<endl;
           	std::cout<<ref_x<<endl;
           	std::cout<<ref_y<<endl;
 
