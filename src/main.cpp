@@ -284,27 +284,61 @@ int main() {
                 //ref_x = previous_path_x[prev_size-1];
                 //ref_y = previous_path_y[prev_size-1];
                 //find the previous points before the reference point
-                double ref_x_prev = previous_path_x[prev_size-2];
-                double ref_y_prev = previous_path_y[prev_size-2];
-                ref_yaw = atan2(ref_y-ref_y_prev,ref_x-ref_x_prev);
+                double ref_x_prev = previous_path_x[0];
+                double ref_y_prev = previous_path_y[0];
+                double ref_yaw_prev = atan2(ref_y_prev-ref_y,ref_x_prev-ref_x);
+
+                double prev_car_x = ref_x_prev - cos(ref_yaw_prev);
+                double prev_car_y = ref_y_prev - sin(ref_yaw_prev);
 
                 //use two points that make the path tangent to the previous path's end point
                 //push the points into the ptsx vector
-                ptsx.push_back(ref_x_prev);
                 ptsx.push_back(ref_x);
+                ptsx.push_back(ref_x_prev);
                 //push the points into the ptsy vector
-                ptsy.push_back(ref_y_prev);
                 ptsy.push_back(ref_y);
+                ptsy.push_back(ref_y_prev);
           	}
 
-          	double dist_inc = 0.3;
-          	for(int i=0; i<50; i++){
+          	//In Frenet, add evenly dist_inc spaced points ahead of the starting reference
+          	double dist_inc = 2;
+          	for(int i=0; i<30; i++){
                 double next_s = car_s+(i+1)*dist_inc;
-                double next_d = 6;
+                double next_d = (2+4*lane);
                 vector<double> xy = getXY(next_s, next_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
 
-                next_x_vals.push_back(xy[0]);
-                next_y_vals.push_back(xy[1]);
+                ptsx.push_back(xy[0]);
+                ptsy.push_back(xy[1]);
+          	}
+
+          	//transform the coordinates into the (ref_x,ref_y) space
+          	for(int i=0;i<ptsx.size(); i++){
+                //shift the points
+                double shift_x = ptsx[i]-ref_x;
+                double shift_y = ptsy[i]-ref_y;
+                //change coordinates
+                ptsx[i] = (shift_x*cos(0-ref_yaw)-shift_y*sin(0-ref_yaw));
+                ptsy[i] = (shift_x*sin(0-ref_yaw)+shift_y*cos(0-ref_yaw));
+          	}
+
+          	//create a spline
+          	tk::spline s;
+
+          	//set (x,y) points to the spline
+          	s.set_points(ptsx,ptsy);
+
+          	//generate the spline points
+          	for(int i=0;i<50; i++){
+                //obtain the spline x value
+                double spline_x = (i+1)*.02*ref_vel/2.24;
+                //obtain the spline y value
+                double spline_y = s(spline_x);
+                //un-transform the spline values
+                spline_x = (ref_x*cos(ref_yaw-0)-ref_y*sin(ref_yaw-0));
+                spline_y = (ref_x*sin(ref_yaw-0)+ref_y*cos(ref_yaw-0));
+                //add them to the next x and y values
+                next_x_vals.push_back(spline_x);
+                next_y_vals.push_back(spline_y);
           	}
 
           	std::cout<<previous_path_x<<endl;
