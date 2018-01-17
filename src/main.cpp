@@ -341,13 +341,13 @@ int main() {
                 next_y_vals.push_back(spline_y);
           	}
           	//output the vector ptsx
-          	std:cout<<"[";
+          	std::cout<<"[";
           	for(int i=0;i<ptsx.size(); i++){
                 std::cout<<ptsx[i]<<" , ";
           	}
           	std::cout<<" "<<endl;
           	//output the vector ptsy
-          	std:cout<<"[";
+          	std::cout<<"[";
           	for(int i=0;i<ptsy.size(); i++){
                 std::cout<<ptsy[i]<<" , ";
           	}
