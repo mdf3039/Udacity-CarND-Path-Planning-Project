@@ -205,9 +205,12 @@ int main() {
   int lane = 1;
 
   //Have a reference velocity to target
-  double ref_vel = 49.5; //mph
+  double ref_vel = 49.5/2.24; //mph converted to meters per second
 
-  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy,&lane,&ref_vel](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
+  //set a boolean for lane change
+  bool need_lane_change = false;
+
+  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy,&lane,&ref_vel,&need_lane_change](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -245,6 +248,30 @@ int main() {
           	auto sensor_fusion = j[1]["sensor_fusion"];
 
           	int prev_size = previous_path_x.size();
+
+          	// TODO: find the cars in front and decelerate if necessary
+          	//for each car in the sensor fusion list
+          	for(int i = 0;i<sensor_fusion.size(); i++){
+                //observe if the car is in my lane
+                double other_car_lane = sensor_fusion[i][6];
+                if(other_car_lane<(2+4*lane+2) && other_car_lane>(2+4*lane-2)){
+                    double other_car_vx = sensor_fusion[i][3];
+                    double other_car_vy = sensor_fusion[i][4];
+                    double other_car_v = sqrt(other_car_vx*other_car_vx+other_car_vy*other_car_vy)
+                    double other_car_s = sensor_fusion[i][5];
+                    //if the other car's s is greater than my vehicle's s and the distance
+                    //between them is under 30m, begin slowing down and preparation
+                    //for a lane change
+                    if((other_car_s>car_s) && ((other_car_s-car_s)<30)){
+                        //change the reference velocity to the car's velocity ahead
+                        ref_vel = 25;//other_car_v;
+                        //signal need for lane change
+                        need_lane_change = true;
+
+                    }
+                }
+          	}
+
 
           	json msgJson;
 
@@ -301,7 +328,7 @@ int main() {
           	}
 
           	//In Frenet, add evenly dist_inc spaced points ahead of the starting reference
-          	double dist_inc = 10;
+          	double dist_inc = 20;
           	for(int i=0; i<3; i++){
                 double next_s = car_s+(i+1)*dist_inc;
                 double next_d = (2+4*lane);
@@ -340,7 +367,7 @@ int main() {
           	//generate the spline points
           	for(int i=0;i<50; i++){
                 //obtain the spline x value
-                double spline_x = (i+1)*.02*ref_vel/2.24;
+                double spline_x = (i+1)*.02*ref_vel;
                 //obtain the spline y value
                 double spline_y = s(spline_x);
                 //un-transform the spline values
