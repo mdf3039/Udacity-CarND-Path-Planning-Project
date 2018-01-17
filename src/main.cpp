@@ -301,11 +301,13 @@ int main() {
           	}
 
           	//In Frenet, add evenly dist_inc spaced points ahead of the starting reference
-          	double dist_inc = 20;
+          	double dist_inc = 10;
           	for(int i=0; i<3; i++){
                 double next_s = car_s+(i+1)*dist_inc;
                 double next_d = (2+4*lane);
                 vector<double> xy = getXY(next_s, next_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+
+                std::cout<<" ["<<next_s<<","<<next_d","<<xy[0]<<xy[1]<<"]"<<endl;
 
                 ptsx.push_back(xy[0]);
                 ptsy.push_back(xy[1]);
