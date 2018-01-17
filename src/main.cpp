@@ -341,8 +341,12 @@ int main() {
                 //obtain the spline y value
                 double spline_y = s(spline_x);
                 //un-transform the spline values
-                spline_x = (ref_x*cos(ref_yaw-0)-ref_y*sin(ref_yaw-0));
-                spline_y = (ref_x*sin(ref_yaw-0)+ref_y*cos(ref_yaw-0));
+                double x_point = spline_x;
+                double y_point = spline_y;
+                spline_x = (x_point*cos(ref_yaw-0)-y_point*sin(ref_yaw-0));
+                spline_y = (x_point*sin(ref_yaw-0)+y_point*cos(ref_yaw-0));
+                spline_x += ref_x;
+                spline_y += ref_y;
                 //add them to the next x and y values
                 next_x_vals.push_back(spline_x);
                 next_y_vals.push_back(spline_y);
