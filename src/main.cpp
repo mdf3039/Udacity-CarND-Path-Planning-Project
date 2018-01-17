@@ -257,7 +257,7 @@ int main() {
                 if(other_car_lane<(2+4*lane+2) && other_car_lane>(2+4*lane-2)){
                     double other_car_vx = sensor_fusion[i][3];
                     double other_car_vy = sensor_fusion[i][4];
-                    double other_car_v = sqrt(other_car_vx*other_car_vx+other_car_vy*other_car_vy)
+                    double other_car_v = sqrt(other_car_vx*other_car_vx+other_car_vy*other_car_vy);
                     double other_car_s = sensor_fusion[i][5];
                     //if the other car's s is greater than my vehicle's s and the distance
                     //between them is under 30m, begin slowing down and preparation
