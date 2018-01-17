@@ -307,7 +307,7 @@ int main() {
                 double next_d = (2+4*lane);
                 vector<double> xy = getXY(next_s, next_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
 
-                std::cout<<" ["<<next_s<<","<<next_d","<<xy[0]<<xy[1]<<"]"<<endl;
+                std::cout<<" ["<<next_s<<","<<next_d<<","<<xy[0]<<","<<xy[1]<<"]"<<endl;
 
                 ptsx.push_back(xy[0]);
                 ptsy.push_back(xy[1]);
