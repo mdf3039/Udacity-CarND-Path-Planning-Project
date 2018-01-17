@@ -340,9 +340,21 @@ int main() {
                 next_x_vals.push_back(spline_x);
                 next_y_vals.push_back(spline_y);
           	}
+          	//output the vector ptsx
+          	std:cout<<"[";
+          	for(int i=0;i<ptsx.size(); i++){
+                std::cout<<ptsx[i]<<" , ";
+          	}
+          	std::cout<<" "<<endl;
+          	//output the vector ptsy
+          	std:cout<<"[";
+          	for(int i=0;i<ptsy.size(); i++){
+                std::cout<<ptsy[i]<<" , ";
+          	}
+          	std::cout<<" "<<endl;
 
-          	std::cout<<ptsx<<endl;
-          	std::cout<<ptsy<<endl;
+          	//std::cout<<ptsx<<endl;
+          	//std::cout<<ptsy<<endl;
           	std::cout<<"Time "<<prev_size<<endl;
           	std::cout<<ptsx[0]<<endl;
           	std::cout<<ref_x<<endl;
