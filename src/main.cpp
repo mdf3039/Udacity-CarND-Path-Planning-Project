@@ -275,7 +275,7 @@ int main() {
                 ptsx.push_back(car_x);
                 ptsx.push_back(prev_car_x);
                 //push the points into the ptsy vector
-                ptsx.push_back(car_y);
+                ptsy.push_back(car_y);
                 ptsy.push_back(prev_car_y);
           	}
           	//else use the previous path's last two endpoints
