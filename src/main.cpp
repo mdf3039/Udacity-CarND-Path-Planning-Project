@@ -294,7 +294,7 @@ int main() {
                 //use two points that make the path tangent to the previous path's end point
                 //push the points into the ptsx vector
                 ptsx.push_back(ref_x);
-                ptsx.push_back(std::abs(ref_x_prev));
+                ptsx.push_back(ref_x_prev);
                 //push the points into the ptsy vector
                 ptsy.push_back(ref_y);
                 ptsy.push_back(ref_y_prev);
@@ -317,7 +317,7 @@ int main() {
                 double shift_x = ptsx[i]-ref_x;
                 double shift_y = ptsy[i]-ref_y;
                 //change coordinates
-                ptsx[i] = (shift_x*cos(0-ref_yaw)-shift_y*sin(0-ref_yaw));
+                ptsx[i] = std::abs((shift_x*cos(0-ref_yaw)-shift_y*sin(0-ref_yaw)));
                 ptsy[i] = (shift_x*sin(0-ref_yaw)+shift_y*cos(0-ref_yaw));
           	}
 
