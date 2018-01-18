@@ -205,7 +205,7 @@ int main() {
   int lane = 1;
 
   //Have a reference velocity to target
-  double ref_vel = 49.5/2.24; //mph converted to meters per second
+  double ref_vel = 0;//49.5/2.24; //mph converted to meters per second
 
   //set a boolean for lane change
   bool need_lane_change = false;
@@ -250,26 +250,98 @@ int main() {
           	int prev_size = previous_path_x.size();
 
           	// TODO: find the cars in front and decelerate if necessary
+          	//create boolean signaling if no cars are within car's lane and position
+            bool no_near_cars = true;
+            //create booleans for left and right lanes free from traffic
+            bool left_free = true;
+            bool right_free = true;
+            //if the car is in the leftmost lane, left is not an option
+            if(lane==0){
+                left_free=False;
+            }
+            //if the car is in the rightmost lane, right is not an option
+            if(lane==2){
+                right_free=False;
+            }
           	//for each car in the sensor fusion list
           	for(int i = 0;i<sensor_fusion.size(); i++){
                 //observe if the car is in my lane
                 double other_car_lane = sensor_fusion[i][6];
+                double other_car_s = sensor_fusion[i][5];
                 if(other_car_lane<(2+4*lane+2) && other_car_lane>(2+4*lane-2)){
                     double other_car_vx = sensor_fusion[i][3];
                     double other_car_vy = sensor_fusion[i][4];
                     double other_car_v = sqrt(other_car_vx*other_car_vx+other_car_vy*other_car_vy);
-                    double other_car_s = sensor_fusion[i][5];
                     //if the other car's s is greater than my vehicle's s and the distance
                     //between them is under 30m, begin slowing down and preparation
                     //for a lane change
                     if((other_car_s>car_s) && ((other_car_s-car_s)<30)){
-                        //change the reference velocity to the car's velocity ahead
-                        ref_vel = other_car_v-1;
+                        //change the no_near_cars boolean
+                        no_near_cars = false;
                         //signal need for lane change
                         need_lane_change = true;
 
                     }
                 }
+                //use the same sensor_fusion for loop to see if lane change is possible
+                //to the left or right
+                //if the distance between the two vehicle's s values less than 10,
+                //and the other car's lane is to the left or right of the car's lane,
+                //then do not switch lanes
+                if(std::abs(other_car_s-car_s)<10){
+                    //find which lane the other car is in
+                    int other_car_lane_round = (int)other_car_lane/4
+                    if((other_car_lane_round-1)==lane){
+                        //the lane is on the left. close the left lane change
+                        left_free = false;
+                    }
+                    if((other_car_lane_round+1)==lane){
+                        //the lane is on the right. close the right lane change
+                        right_free = false;
+                    }
+                }
+                //if the car in the other lane are going slower than the car in
+                //the lane attempting to switch from, do not switch lanes
+                if(((other_car_s-car_s)>=10) && ((other_car_s-car_s)<40)){
+                    //find the velocity of the other car
+                    double other_car_vx = sensor_fusion[i][3];
+                    double other_car_vy = sensor_fusion[i][4];
+                    double other_car_v = sqrt(other_car_vx*other_car_vx+other_car_vy*other_car_vy);
+                    //find which lane the other car is in
+                    int other_car_lane_round = (int)other_car_lane/4
+                    if(((other_car_lane_round-1)==lane) && (other_car_v<ref_vel)){
+                        //the lane is on the left. close the left lane change
+                        left_free = false;
+                    }
+                    if(((other_car_lane_round+1)==lane) && (other_car_v<ref_vel)){
+                        //the lane is on the right. close the right lane change
+                        right_free = false;
+                    }
+                }
+
+          	}
+          	if((need_lane_change) && (left_free)){
+                //change lanes to the left. Set the reference velocity back to
+                //its original and reset other variables
+                lane = lane-1;
+                no_near_cars = true;
+                need_lane_change = false;
+          	}
+          	if((need_lane_change) && (right_free)){
+                //change lanes to the right. Set the reference velocity back to
+                //its original and reset other variables
+                lane = lane+1;
+                no_near_cars = true;
+                need_lane_change = false;
+          	}
+          	//if there aren't any cars within your path and moving slower than 49.5mph
+          	if((no_near_cars) && (ref_vel<(49.5/2.24))){
+                //add onto the reference velocity
+                ref_vel += 5.0/2.24; //mph converted to meters per second
+          	}
+          	//if there are cars within your path, decrease the velocity
+          	else if(!no_near_cars){
+                ref_vel -= 5.0/2.24;
           	}
           	std::cout<<"Reference Velocity: "<<ref_vel<<endl;
 
