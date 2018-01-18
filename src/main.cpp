@@ -375,8 +375,8 @@ int main() {
           	if(prev_size>=2){
                 next_x_vals.push_back(previous_path_x[0]);
                 next_y_vals.push_back(previous_path_y[0]);
-                double first_s = end_path_s[0];
-                double first_d = end_path_d[0];
+                double first_s = end_path_s;
+                double first_d = end_path_d;
                 ptss.push_back(first_s);
                 ptsd.push_back(first_d);
           	}
@@ -398,6 +398,7 @@ int main() {
                 double next_d = (2+4*lane);
                 ptss.push_back(next_s);
                 ptsd.push_back(next_d);
+          	}
             //translate these points with respect to the first s and d
             for(int i=0; i<ptss.size(); i++){
                 ptss[i] = ptss[i]-first_s;
