@@ -353,7 +353,7 @@ int main() {
           	else if(!no_near_cars){
                 ref_vel -= .224/2.24;
           	}
-          	counter += 1
+          	counter += 1;
           	std::cout<<"Reference Velocity: "<<ref_vel<<endl;
 
 
