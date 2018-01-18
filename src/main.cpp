@@ -257,11 +257,11 @@ int main() {
             bool right_free = true;
             //if the car is in the leftmost lane, left is not an option
             if(lane==0){
-                left_free=False;
+                left_free=false;
             }
             //if the car is in the rightmost lane, right is not an option
             if(lane==2){
-                right_free=False;
+                right_free=false;
             }
           	//for each car in the sensor fusion list
           	for(int i = 0;i<sensor_fusion.size(); i++){
@@ -290,7 +290,7 @@ int main() {
                 //then do not switch lanes
                 if(std::abs(other_car_s-car_s)<10){
                     //find which lane the other car is in
-                    int other_car_lane_round = (int)other_car_lane/4
+                    int other_car_lane_round = (int)other_car_lane/4;
                     if((other_car_lane_round-1)==lane){
                         //the lane is on the left. close the left lane change
                         left_free = false;
@@ -308,7 +308,7 @@ int main() {
                     double other_car_vy = sensor_fusion[i][4];
                     double other_car_v = sqrt(other_car_vx*other_car_vx+other_car_vy*other_car_vy);
                     //find which lane the other car is in
-                    int other_car_lane_round = (int)other_car_lane/4
+                    int other_car_lane_round = (int)other_car_lane/4;
                     if(((other_car_lane_round-1)==lane) && (other_car_v<ref_vel)){
                         //the lane is on the left. close the left lane change
                         left_free = false;
