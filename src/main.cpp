@@ -291,7 +291,7 @@ int main() {
                 //if the distance between the two vehicle's s values less than 10,
                 //and the other car's lane is to the left or right of the car's lane,
                 //then do not switch lanes
-                if(std::abs(other_car_s-car_s)<5){
+                if(std::abs(other_car_s-car_s)<10){
                     //find which lane the other car is in
                     int other_car_lane_round = (int)other_car_lane/4;
                     if((other_car_lane_round-1)==lane){
@@ -325,7 +325,7 @@ int main() {
           	}
           	//if the counter is less than 11, then the lane has not been constant
           	//for 10 iterations. do not change lanes if requested
-          	if(counter<=10){
+          	if(counter<=20){
                 need_lane_change = false;
           	}
           	if((need_lane_change) && (left_free)){
@@ -347,11 +347,11 @@ int main() {
           	//if there aren't any cars within your path and moving slower than 49.5mph
           	if((no_near_cars) && (ref_vel<(49.5/2.24))){
                 //add onto the reference velocity
-                ref_vel += .224/2.24; //mph converted to meters per second
+                ref_vel += .204/2.24; //mph converted to meters per second
           	}
           	//if there are cars within your path, decrease the velocity
           	else if(!no_near_cars){
-                ref_vel -= .224/2.24;
+                ref_vel -= .204/2.24;
           	}
           	counter += 1;
           	std::cout<<"Reference Velocity: "<<ref_vel<<endl;
