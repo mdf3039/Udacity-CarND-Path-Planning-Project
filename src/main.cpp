@@ -372,18 +372,20 @@ int main() {
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
           	//push the last value into the vals if there was a previous path
           	//also set first_s and d values
+          	double first_s;
+          	double first_d;
           	if(prev_size>=2){
                 next_x_vals.push_back(previous_path_x[0]);
                 next_y_vals.push_back(previous_path_y[0]);
-                double first_s = end_path_s;
-                double first_d = end_path_d;
+                first_s = end_path_s;
+                first_d = end_path_d;
                 ptss.push_back(first_s);
                 ptsd.push_back(first_d);
           	}
           	else{
                 //if it is the beginning, push back the first point using the ref_vel
-                double first_s = car_s + ref_vel*.02;
-                double first_d = car_d;
+                first_s = car_s + ref_vel*.02;
+                first_d = car_d;
                 vector<double> xy = getXY(first_s, first_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
                 next_x_vals.push_back(xy[0]);
                 next_y_vals.push_back(xy[1]);
