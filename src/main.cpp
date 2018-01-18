@@ -258,6 +258,8 @@ int main() {
             //create booleans for left and right lanes free from traffic
             bool left_free = true;
             bool right_free = true;
+            //set up current_lane to keep track when lane shift
+            int current_lane = lane;
             //if the car is in the leftmost lane, left is not an option
             if(lane==0){
                 left_free=false;
@@ -361,10 +363,68 @@ int main() {
 
           	vector<double> next_x_vals;
           	vector<double> next_y_vals;
+          	//create a list of widely spaced (s,d) waypoints, evenly spaced at 30m
+          	//later we will interpolate these waypoints with a spline and fill it in with more points that control speed.
+          	vector<double> ptss;
+          	vector<double> ptsd;
 
 
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
+          	//push the last value into the vals if there was a previous path
+          	//also set first_s and d values
+          	if(prev_size>=2){
+                next_x_vals.push_back(previous_path_x[0]);
+                next_y_vals.push_back(previous_path_y[0]);
+                double first_s = end_path_s[0];
+                double first_d = end_path_d[0];
+                ptss.push_back(first_s);
+                ptsd.push_back(first_d);
+          	}
+          	else{
+                //if it is the beginning, push back the first point using the ref_vel
+                double first_s = car_s + ref_vel*.02;
+                double first_d = car_d;
+                vector<double> xy = getXY(first_s, first_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+                next_x_vals.push_back(xy[0]);
+                next_y_vals.push_back(xy[1]);
+                ptss.push_back(first_s);
+                ptsd.push_back(first_d);
+          	}
+          	//use s and d to find the new path values
+          	//In Frenet, add evenly dist_inc spaced points ahead of the starting reference
+          	double dist_inc = 20;
+          	for(int i=0; i<3; i++){
+                double next_s = first_s+(i+1)*dist_inc;
+                double next_d = (2+4*lane);
+                ptss.push_back(next_s);
+                ptsd.push_back(next_d);
+            //translate these points with respect to the first s and d
+            for(int i=0; i<ptss.size(); i++){
+                ptss[i] = ptss[i]-first_s;
+                ptsd[i] = ptsd[i]-first_d;
+            }
+            //spline with respect to the points
+            //create a spline
+          	tk::spline s;
+          	//set (x,y) points to the spline
+          	s.set_points(ptss,ptsd);
+          	//generate the spline points
+          	for(int i=0;i<50; i++){
+                //obtain the spline s value
+                double spline_s = (i+1)*.02*ref_vel;
+                //obtain the spline y value
+                double spline_d = s(spline_s);
+                //un-transform the spline values
+                spline_s += first_s;
+                spline_d += first_d;
+                //obtain the x and y values
+                vector<double> xy = getXY(spline_s, spline_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+                //add them to the next x and y values
+                next_x_vals.push_back(xy[0]);
+                next_y_vals.push_back(xy[1]);
+          	}
 
+          	/*
           	//create a list of widely spaced (x,y) waypoints, evenly spaced at 30m
           	//later we will interpolate these waypoints with a spline and fill it in with more points that control speed.
           	vector<double> ptsx;
@@ -465,6 +525,7 @@ int main() {
                 next_x_vals.push_back(spline_x);
                 next_y_vals.push_back(spline_y);
           	}
+          	*/
           	//output the vector next_x_vals
           	std::cout<<"[";
           	for(int i=0;i<next_x_vals.size(); i++){
@@ -477,6 +538,7 @@ int main() {
                 std::cout<<next_y_vals[i]<<" , ";
           	}
           	std::cout<<" "<<endl;
+
 
           	/*//std::cout<<ptsx<<endl;
           	//std::cout<<ptsy<<endl;
