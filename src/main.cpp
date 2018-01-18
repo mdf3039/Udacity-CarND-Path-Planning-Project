@@ -210,7 +210,10 @@ int main() {
   //set a boolean for lane change
   bool need_lane_change = false;
 
-  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy,&lane,&ref_vel,&need_lane_change](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
+  //set up a counter for the lane changing duration
+  int counter = 100;
+
+  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy,&lane,&ref_vel,&need_lane_change,&counter](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -288,7 +291,7 @@ int main() {
                 //if the distance between the two vehicle's s values less than 10,
                 //and the other car's lane is to the left or right of the car's lane,
                 //then do not switch lanes
-                if(std::abs(other_car_s-car_s)<10){
+                if(std::abs(other_car_s-car_s)<5){
                     //find which lane the other car is in
                     int other_car_lane_round = (int)other_car_lane/4;
                     if((other_car_lane_round-1)==lane){
@@ -302,23 +305,28 @@ int main() {
                 }
                 //if the car in the other lane are going slower than the car in
                 //the lane attempting to switch from, do not switch lanes
-                if(((other_car_s-car_s)>=10) && ((other_car_s-car_s)<40)){
+                if(((other_car_s-car_s)>=10) && ((other_car_s-car_s)<50)){
                     //find the velocity of the other car
                     double other_car_vx = sensor_fusion[i][3];
                     double other_car_vy = sensor_fusion[i][4];
                     double other_car_v = sqrt(other_car_vx*other_car_vx+other_car_vy*other_car_vy);
                     //find which lane the other car is in
                     int other_car_lane_round = (int)other_car_lane/4;
-                    if(((other_car_lane_round-1)==lane) && (other_car_v<ref_vel)){
+                    if(((other_car_lane_round-1)==lane)){// && (other_car_v<ref_vel)){
                         //the lane is on the left. close the left lane change
                         left_free = false;
                     }
-                    if(((other_car_lane_round+1)==lane) && (other_car_v<ref_vel)){
+                    if(((other_car_lane_round+1)==lane)){// && (other_car_v<ref_vel)){
                         //the lane is on the right. close the right lane change
                         right_free = false;
                     }
                 }
 
+          	}
+          	//if the counter is less than 11, then the lane has not been constant
+          	//for 10 iterations. do not change lanes if requested
+          	if(counter<=10){
+                need_lane_change = false;
           	}
           	if((need_lane_change) && (left_free)){
                 //change lanes to the left. Set the reference velocity back to
@@ -326,6 +334,7 @@ int main() {
                 lane = lane-1;
                 no_near_cars = true;
                 need_lane_change = false;
+                counter = 0;
           	}
           	if((need_lane_change) && (right_free)){
                 //change lanes to the right. Set the reference velocity back to
@@ -333,16 +342,18 @@ int main() {
                 lane = lane+1;
                 no_near_cars = true;
                 need_lane_change = false;
+                counter = 0;
           	}
           	//if there aren't any cars within your path and moving slower than 49.5mph
           	if((no_near_cars) && (ref_vel<(49.5/2.24))){
                 //add onto the reference velocity
-                ref_vel += 5.0/2.24; //mph converted to meters per second
+                ref_vel += .224/2.24; //mph converted to meters per second
           	}
           	//if there are cars within your path, decrease the velocity
           	else if(!no_near_cars){
-                ref_vel -= 5.0/2.24;
+                ref_vel -= .224/2.24;
           	}
+          	counter += 1
           	std::cout<<"Reference Velocity: "<<ref_vel<<endl;
 
 
