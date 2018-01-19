@@ -256,6 +256,9 @@ int main() {
 
           	int prev_size = previous_path_x.size();
 
+          	//number of points to push back
+          	int points_to_push_back = 20;
+
           	// TODO: find the cars in front and decelerate if necessary
           	//create boolean signaling if no cars are within car's lane and position
             bool no_near_cars = true;
@@ -379,14 +382,17 @@ int main() {
           	double first_s;
           	double first_d;
           	if(prev_size>=2){
-                next_x_vals.push_back(previous_path_x[0]);
-                next_y_vals.push_back(previous_path_y[0]);
+                //push back the last points_to_push_back points
+                for(int i=0; i<points_to_push_back; i++){
+                    next_x_vals.push_back(previous_path_x[i]);
+                    next_y_vals.push_back(previous_path_y[i]);
+                }
                 double n_y = previous_path_y[0];
                 double n_x = previous_path_x[0];
                 //double theta = atan2(n_y-car_y,n_x-car_x);//deg2rad(car_yaw)
                 vector<double> sd = getFrenet(n_x, n_y, deg2rad(car_yaw), map_waypoints_x, map_waypoints_y);
-                first_s = prev_s[50-prev_size];
-                first_d = prev_d[50-prev_size];
+                first_s = prev_s[50-prev_size+points_to_push_back-1];
+                first_d = prev_d[50-prev_size+points_to_push_back-1];
                 ptss.push_back(first_s);
                 ptsd.push_back(first_d);
 
@@ -424,7 +430,7 @@ int main() {
           	//set (x,y) points to the spline
           	s.set_points(ptss,ptsd);
           	//generate the spline points
-          	for(int i=0;i<50; i++){
+          	for(int i=next_x_vals.size();i<50; i++){
                 //obtain the spline s value
                 double spline_s = (i+1)*.02*ref_vel;
                 //obtain the spline y value
