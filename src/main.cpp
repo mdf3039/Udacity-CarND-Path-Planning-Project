@@ -256,6 +256,9 @@ int main() {
 
           	int prev_size = previous_path_x.size();
 
+          	//given the previous path size, make the prev_s and prev_d the same size
+
+
           	//number of points to push back
           	int points_to_push_back = 20;
 
@@ -370,6 +373,8 @@ int main() {
 
           	vector<double> next_x_vals;
           	vector<double> next_y_vals;
+          	vector<double> next_s_vals;
+          	vector<double> next_d_vals;
           	//create a list of widely spaced (s,d) waypoints, evenly spaced at 30m
           	//later we will interpolate these waypoints with a spline and fill it in with more points that control speed.
           	vector<double> ptss;
@@ -386,6 +391,8 @@ int main() {
                 for(int i=0; i<points_to_push_back; i++){
                     next_x_vals.push_back(previous_path_x[i]);
                     next_y_vals.push_back(previous_path_y[i]);
+                    next_s_vals.push_back(prev_s[50-prev_size+i]);
+                    next_d_vals.push_back(prev_d[50-prev_size+i]);
                 }
                 double n_y = previous_path_y[0];
                 double n_x = previous_path_x[0];
@@ -407,9 +414,6 @@ int main() {
                 ptss.push_back(first_s);
                 ptsd.push_back(first_d);
           	}
-          	//clear the previous s and d vector for later use
-          	prev_s.clear();
-          	prev_d.clear();
           	//use s and d to find the new path values
           	//In Frenet, add evenly dist_inc spaced points ahead of the starting reference
           	double dist_inc = 20;
@@ -440,14 +444,17 @@ int main() {
                 //un-transform the spline values
                 spline_s += first_s;
                 spline_d += first_d;
-                prev_s.push_back(spline_s);
-                prev_d.push_back(spline_d);
+                next_s_vals.push_back(spline_s);
+                next_d_vals.push_back(spline_d);
                 //obtain the x and y values
                 vector<double> xy = getXY(spline_s, spline_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
                 //add them to the next x and y values
                 next_x_vals.push_back(xy[0]);
                 next_y_vals.push_back(xy[1]);
           	}
+          	//make the s and d of the current the previous for next time
+          	prev_s = next_s_vals;
+          	prev_d = next_d_vals;
 
           	/*
           	//create a list of widely spaced (x,y) waypoints, evenly spaced at 30m
