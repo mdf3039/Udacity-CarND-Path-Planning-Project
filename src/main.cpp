@@ -256,6 +256,9 @@ int main() {
 
           	int prev_size = previous_path_x.size();
 
+          	//number of points to push back
+          	int points_to_push_back = 20;
+
           	//use the predictions for where my car will be during that same time
           	double future_car_s;
             double future_car_d;
@@ -268,9 +271,6 @@ int main() {
                 future_car_d = car_d;
             }
 
-
-          	//number of points to push back
-          	int points_to_push_back = 20;
 
           	// TODO: find the cars in front and decelerate if necessary
           	//create boolean signaling if no cars are within car's lane and position
