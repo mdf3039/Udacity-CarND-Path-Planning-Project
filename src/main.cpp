@@ -213,7 +213,11 @@ int main() {
   //set up a counter for the lane changing duration
   int counter = 100;
 
-  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy,&lane,&ref_vel,&need_lane_change,&counter](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
+  //set up reference vectors that store the s and d points of the previous vector
+  vector<double> prev_s;
+  vector<double> prev_d;
+
+  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy,&lane,&ref_vel,&need_lane_change,&counter,&prev_sd](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -381,10 +385,11 @@ int main() {
                 double n_x = previous_path_x[0];
                 //double theta = atan2(n_y-car_y,n_x-car_x);//deg2rad(car_yaw)
                 vector<double> sd = getFrenet(n_x, n_y, deg2rad(car_yaw), map_waypoints_x, map_waypoints_y);
-                first_s = sd[0];
-                first_d = sd[1];
+                first_s = prev_s[50-prev_size];
+                first_d = prev_d[50-prev_size];
                 ptss.push_back(first_s);
                 ptsd.push_back(first_d);
+
           	}
           	else{
                 //if it is the beginning, push back the first point using the ref_vel
@@ -396,6 +401,9 @@ int main() {
                 ptss.push_back(first_s);
                 ptsd.push_back(first_d);
           	}
+          	//clear the previous s and d vector for later use
+          	prev_s.clear();
+          	prev_d.clear();
           	//use s and d to find the new path values
           	//In Frenet, add evenly dist_inc spaced points ahead of the starting reference
           	double dist_inc = 20;
@@ -424,6 +432,8 @@ int main() {
                 //un-transform the spline values
                 spline_s += first_s;
                 spline_d += first_d;
+                prev_s.push_back(spline_s);
+                prev_d.push_back(spline_d);
                 //obtain the x and y values
                 vector<double> xy = getXY(spline_s, spline_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
                 //add them to the next x and y values
