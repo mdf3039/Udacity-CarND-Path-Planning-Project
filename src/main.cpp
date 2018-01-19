@@ -257,7 +257,7 @@ int main() {
           	int prev_size = previous_path_x.size();
 
           	//number of points to push back
-          	int points_to_push_back = 20;
+          	int points_to_push_back = 10;
 
           	//use the predictions for where my car will be during that same time
           	double future_car_s;
@@ -293,17 +293,17 @@ int main() {
                 //observe if the car is in my lane
                 double other_car_lane = sensor_fusion[i][6];
                 double other_car_s = sensor_fusion[i][5];
+                double other_car_vx = sensor_fusion[i][3];
+                double other_car_vy = sensor_fusion[i][4];
+                double other_car_v = sqrt(other_car_vx*other_car_vx+other_car_vy*other_car_vy);
+                //now that the velocity is found, predict where the car will be in
+                //points_to_push_back iterations
+                other_car_s = other_car_s + other_car_v*.02*points_to_push_back;
                 if(other_car_lane<(2+4*lane+2) && other_car_lane>(2+4*lane-2)){
-                    double other_car_vx = sensor_fusion[i][3];
-                    double other_car_vy = sensor_fusion[i][4];
-                    double other_car_v = sqrt(other_car_vx*other_car_vx+other_car_vy*other_car_vy);
-                    //now that the velocity is found, predict where the car will be in
-                    //points_to_push_back iterations
-                    other_car_s = other_car_s + other_car_v*.02*points_to_push_back;
                     //if the other car's s is greater than my vehicle's s and the distance
                     //between them is under 30m, begin slowing down and preparation
                     //for a lane change
-                    if((other_car_s>future_car_s) && ((other_car_s-future_car_s)<30)){
+                    if((other_car_s>future_car_s) && ((other_car_s-future_car_s)<20)){
                         //change the no_near_cars boolean
                         no_near_cars = false;
                         //signal need for lane change
@@ -331,10 +331,6 @@ int main() {
                 //if the car in the other lane are going slower than the car in
                 //the lane attempting to switch from, do not switch lanes
                 if(((other_car_s-future_car_s)>=20) && ((other_car_s-future_car_s)<50)){
-                    //find the velocity of the other car
-                    double other_car_vx = sensor_fusion[i][3];
-                    double other_car_vy = sensor_fusion[i][4];
-                    double other_car_v = sqrt(other_car_vx*other_car_vx+other_car_vy*other_car_vy);
                     //find which lane the other car is in
                     int other_car_lane_round = (int)other_car_lane/4;
                     if(((other_car_lane_round-1)==lane)){// && (other_car_v<ref_vel)){
@@ -370,13 +366,13 @@ int main() {
                 counter = 0;
           	}
           	//if there aren't any cars within your path and moving slower than 49.5mph
-          	if((no_near_cars) && (ref_vel<(49.5/2.24))){
+          	if((no_near_cars) && (ref_vel<(48.5/2.24))){
                 //add onto the reference velocity
-                ref_vel += .204/2.24; //mph converted to meters per second
+                ref_vel += .224/2.24; //mph converted to meters per second
           	}
           	//if there are cars within your path, decrease the velocity
           	else if(!no_near_cars){
-                ref_vel -= .204/2.24;
+                ref_vel -= .224/2.24;
           	}
           	counter += 1;
           	std::cout<<"Reference Velocity: "<<ref_vel<<endl;
