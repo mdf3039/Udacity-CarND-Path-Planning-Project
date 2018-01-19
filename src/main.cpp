@@ -377,8 +377,8 @@ int main() {
           	if(prev_size>=2){
                 next_x_vals.push_back(previous_path_x[0]);
                 next_y_vals.push_back(previous_path_y[0]);
-                //double theta = atan2(previous_path_y[0]-ref_y,previous_path_x[0]-ref_x);
-                vector<double> sd = getFrenet(previous_path_x[0], previous_path_y[0], deg2rad(car_yaw), map_waypoints_x, map_waypoints_y);
+                double theta = atan2(previous_path_y[0]-car_y,previous_path_x[0]-car_x);//deg2rad(car_yaw)
+                vector<double> sd = getFrenet(previous_path_x[0], previous_path_y[0], theta, map_waypoints_x, map_waypoints_y);
                 first_s = sd[0];
                 first_d = sd[1];
                 ptss.push_back(first_s);
