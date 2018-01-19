@@ -429,8 +429,10 @@ int main() {
           	tk::spline s;
           	//set (x,y) points to the spline
           	s.set_points(ptss,ptsd);
+          	//get size of points already in next vals
+          	int next_vals_size = next_x_vals.size();
           	//generate the spline points
-          	for(int i=next_x_vals.size();i<50; i++){
+          	for(int i=0;i<(50-next_vals_size); i++){
                 //obtain the spline s value
                 double spline_s = (i+1)*.02*ref_vel;
                 //obtain the spline y value
