@@ -460,7 +460,7 @@ int main() {
           	}
 
           	//In Frenet, add evenly dist_inc spaced points ahead of the starting reference
-          	double dist_inc = 20;
+          	double dist_inc = 40;
           	for(int i=0; i<3; i++){
                 double next_s = car_s+(i+1)*dist_inc;
                 double next_d = (2+4*lane);
