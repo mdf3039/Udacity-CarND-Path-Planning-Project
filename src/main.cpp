@@ -403,8 +403,6 @@ int main() {
           	//later we will interpolate these waypoints with a spline and fill it in with more points that control speed.
           	vector<double> ptss;
           	vector<double> ptsd;
-          	vector<double> ptsx;
-          	vector<double> ptsy;
 
 
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
@@ -438,6 +436,7 @@ int main() {
                 for(int i=0; i<points_to_push_back; i++){
                     next_x_vals.push_back(previous_path_x[i]);
                     next_y_vals.push_back(previous_path_y[i]);
+                }
                 //Redefine reference state as previous path end point
                 ref_x = previous_path_x[points_to_push_back];
                 ref_y = previous_path_y[points_to_push_back];
