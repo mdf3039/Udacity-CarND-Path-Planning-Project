@@ -288,6 +288,7 @@ int main() {
             if(lane==2){
                 right_free=false;
             }
+            double other_car_lane;
           	//for each car in the sensor fusion list
           	for(int i = 0;i<sensor_fusion.size(); i++){
                 //observe if the car is in my lane
