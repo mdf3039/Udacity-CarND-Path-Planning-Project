@@ -257,14 +257,22 @@ int main() {
           	int prev_size = previous_path_x.size();
 
           	//number of points to push back
-          	int points_to_push_back = 5;
+          	int points_to_push_back = 10;
 
-          	//use the predictions for where my car will be during that same time
+          	//find what my car's s and d values will be in the points_to_push_back
+          	//future. If there is no previous path, then use current value
           	double future_car_s;
             double future_car_d;
             if(prev_size!=0){
-                future_car_s = prev_s[50-prev_size+points_to_push_back-1];
-                future_car_d = prev_d[50-prev_size+points_to_push_back-1];
+                //obtain car's x, y, and angle values
+                double future_car_x = previous_path_x[points_to_push_back];
+                double future_car_x1 = previous_path_x[points_to_push_back+1];
+                double future_car_y = previous_path_y[points_to_push_back];
+                double future_car_y1 = previous_path_y[points_to_push_back+1];
+                double future_car_yaw = atan2(future_car_y1-future_car_y,future_car_x1-future_car_x);
+                vector<double> future_sd = getFrenet(future_car_x, future_car_y, future_car_yaw, map_waypoints_x, map_waypoints_y);
+                future_car_s = future_sd[0];
+                future_car_d = future_sd[1];
             }
             else{
                 future_car_s = car_s;
@@ -395,90 +403,11 @@ int main() {
           	//later we will interpolate these waypoints with a spline and fill it in with more points that control speed.
           	vector<double> ptss;
           	vector<double> ptsd;
+          	vector<double> ptsx;
+          	vector<double> ptsy;
 
 
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
-          	//push the last value into the vals if there was a previous path
-          	//also set first_s and d values
-          	double first_s;
-          	double first_d;
-          	if(prev_size>=2){
-                //push back the last points_to_push_back points
-                for(int i=0; i<points_to_push_back; i++){
-                    next_x_vals.push_back(previous_path_x[i]);
-                    next_y_vals.push_back(previous_path_y[i]);
-                    next_s_vals.push_back(prev_s[50-prev_size+i]);
-                    next_d_vals.push_back(prev_d[50-prev_size+i]);
-                }
-                double n_y = previous_path_y[0];
-                double n_x = previous_path_x[0];
-                //double theta = atan2(n_y-car_y,n_x-car_x);//deg2rad(car_yaw)
-                vector<double> sd = getFrenet(n_x, n_y, deg2rad(car_yaw), map_waypoints_x, map_waypoints_y);
-                //put the s and d points used in the ptss and ptsd. Also put the
-                //previous points for smoothness
-                double before_first_s = prev_s[50-prev_size+points_to_push_back-2];
-                double before_first_d = prev_d[50-prev_size+points_to_push_back-2];
-                ptss.push_back(before_first_s);
-                ptsd.push_back(before_first_d);
-                first_s = prev_s[50-prev_size+points_to_push_back-1];
-                first_d = prev_d[50-prev_size+points_to_push_back-1];
-                ptss.push_back(first_s);
-                ptsd.push_back(first_d);
-
-          	}
-          	else{
-                //if it is the beginning, push back the first point using the ref_vel
-                first_s = car_s + ref_vel*.02;
-                first_d = car_d;
-                vector<double> xy = getXY(first_s, first_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-                next_x_vals.push_back(xy[0]);
-                next_y_vals.push_back(xy[1]);
-                ptss.push_back(first_s);
-                ptsd.push_back(first_d);
-          	}
-          	//use s and d to find the new path values
-          	//In Frenet, add evenly dist_inc spaced points ahead of the starting reference
-          	double dist_inc = 30;
-          	for(int i=0; i<3; i++){
-                double next_s = first_s+(i+1)*dist_inc;
-                double next_d = (2+4*lane);
-                ptss.push_back(next_s);
-                ptsd.push_back(next_d);
-          	}
-            //translate these points with respect to the first s and d
-            for(int i=0; i<ptss.size(); i++){
-                ptss[i] = ptss[i]-first_s;
-                ptsd[i] = ptsd[i]-first_d;
-            }
-            //spline with respect to the points
-            //create a spline
-          	tk::spline s;
-          	//set (x,y) points to the spline
-          	s.set_points(ptss,ptsd);
-          	//get size of points already in next vals
-          	int next_vals_size = next_x_vals.size();
-          	//generate the spline points
-          	for(int i=0;i<(50-next_vals_size); i++){
-                //obtain the spline s value
-                double spline_s = (i+1)*.02*ref_vel;
-                //obtain the spline y value
-                double spline_d = s(spline_s);
-                //un-transform the spline values
-                spline_s += first_s;
-                spline_d += first_d;
-                next_s_vals.push_back(spline_s);
-                next_d_vals.push_back(spline_d);
-                //obtain the x and y values
-                vector<double> xy = getXY(spline_s, spline_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-                //add them to the next x and y values
-                next_x_vals.push_back(xy[0]);
-                next_y_vals.push_back(xy[1]);
-          	}
-          	//make the s and d of the current the previous for next time
-          	prev_s = next_s_vals;
-          	prev_d = next_d_vals;
-
-          	/*
           	//create a list of widely spaced (x,y) waypoints, evenly spaced at 30m
           	//later we will interpolate these waypoints with a spline and fill it in with more points that control speed.
           	vector<double> ptsx;
@@ -505,24 +434,30 @@ int main() {
           	}
           	//else use the previous path's last two endpoints
           	else{
+                //push back the last points_to_push_back points
+                for(int i=0; i<points_to_push_back; i++){
+                    next_x_vals.push_back(previous_path_x[i]);
+                    next_y_vals.push_back(previous_path_y[i]);
                 //Redefine reference state as previous path end point
-                //ref_x = previous_path_x[prev_size-1];
-                //ref_y = previous_path_y[prev_size-1];
+                ref_x = previous_path_x[points_to_push_back];
+                ref_y = previous_path_y[points_to_push_back];
                 //find the previous points before the reference point
-                double ref_x_prev = previous_path_x[0];
-                double ref_y_prev = previous_path_y[0];
-                double ref_yaw_prev = atan2(ref_y_prev-ref_y,ref_x_prev-ref_x);
-
-                double prev_car_x = ref_x_prev - cos(ref_yaw_prev);
-                double prev_car_y = ref_y_prev - sin(ref_yaw_prev);
+                double ref_x_prev = previous_path_x[points_to_push_back-1];
+                double ref_y_prev = previous_path_y[points_to_push_back-1];
+                double ref_yaw = atan2(ref_y-ref_y_prev,ref_x-ref_x_prev);
+                //find the point before the previous point
+                double ref_x_prev2 = previous_path_x[points_to_push_back-2];
+                double ref_y_prev2 = previous_path_y[points_to_push_back-2];
 
                 //use two points that make the path tangent to the previous path's end point
                 //push the points into the ptsx vector
-                ptsx.push_back(ref_x);
+                ptsx.push_back(ref_x_prev2);
                 ptsx.push_back(ref_x_prev);
+                ptsx.push_back(ref_x);
                 //push the points into the ptsy vector
-                ptsy.push_back(ref_y);
+                ptsy.push_back(ref_y_prev2);
                 ptsy.push_back(ref_y_prev);
+                ptsy.push_back(ref_y);
           	}
 
           	//In Frenet, add evenly dist_inc spaced points ahead of the starting reference
@@ -544,7 +479,7 @@ int main() {
                 double shift_x = ptsx[i]-ref_x;
                 double shift_y = ptsy[i]-ref_y;
                 //change coordinates
-                ptsx[i] = std::abs((shift_x*cos(0-ref_yaw)-shift_y*sin(0-ref_yaw)));
+                ptsx[i] = (shift_x*cos(0-ref_yaw)-shift_y*sin(0-ref_yaw));
                 ptsy[i] = (shift_x*sin(0-ref_yaw)+shift_y*cos(0-ref_yaw));
           	}
 
@@ -562,8 +497,10 @@ int main() {
           	//set (x,y) points to the spline
           	s.set_points(ptsx,ptsy);
 
+          	//get size of points already in next vals
+          	int next_vals_size = next_x_vals.size();
           	//generate the spline points
-          	for(int i=0;i<50; i++){
+          	for(int i=0;i<(50-next_vals_size); i++){
                 //obtain the spline x value
                 double spline_x = (i+1)*.02*ref_vel;
                 //obtain the spline y value
@@ -579,7 +516,7 @@ int main() {
                 next_x_vals.push_back(spline_x);
                 next_y_vals.push_back(spline_y);
           	}
-          	*//*
+          	/*
           	//output the vector next_x_vals
           	std::cout<<"[";
           	for(int i=0;i<next_x_vals.size(); i++){
