@@ -337,7 +337,7 @@ int main() {
                     //find which lane the other car is in
                     int other_car_lane_round = (int)other_car_lane/4;
                     std::cout<<"oOther Car Lane: "<<other_car_lane<<std::endl;
-                    std::cout<<"oOther Car Lane Round: "<<other_car_lane_round<<std
+                    std::cout<<"oOther Car Lane Round: "<<other_car_lane_round<<std::endl;
                     if(((other_car_lane_round-1)==lane)){// && (other_car_v<ref_vel)){
                         //the lane is on the left. close the left lane change
                         left_free = false;
