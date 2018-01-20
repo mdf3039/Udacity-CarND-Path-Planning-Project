@@ -438,15 +438,15 @@ int main() {
                     next_y_vals.push_back(previous_path_y[i]);
                 }
                 //Redefine reference state as previous path end point
-                ref_x = previous_path_x[points_to_push_back];
-                ref_y = previous_path_y[points_to_push_back];
+                ref_x = previous_path_x[points_to_push_back-1];
+                ref_y = previous_path_y[points_to_push_back-1];
                 //find the previous points before the reference point
-                double ref_x_prev = previous_path_x[points_to_push_back-1];
-                double ref_y_prev = previous_path_y[points_to_push_back-1];
+                double ref_x_prev = previous_path_x[points_to_push_back-2];
+                double ref_y_prev = previous_path_y[points_to_push_back-2];
                 double ref_yaw = atan2(ref_y-ref_y_prev,ref_x-ref_x_prev);
                 //find the point before the previous point
-                double ref_x_prev2 = previous_path_x[points_to_push_back-2];
-                double ref_y_prev2 = previous_path_y[points_to_push_back-2];
+                double ref_x_prev2 = previous_path_x[points_to_push_back-3];
+                double ref_y_prev2 = previous_path_y[points_to_push_back-3];
 
                 //use two points that make the path tangent to the previous path's end point
                 //push the points into the ptsx vector
