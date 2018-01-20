@@ -320,6 +320,8 @@ int main() {
                 if(std::abs(other_car_s-future_car_s)<20){
                     //find which lane the other car is in
                     int other_car_lane_round = (int)other_car_lane/4;
+                    std::cout<<"Other Car Lane: "<<other_car_lane<<std::endl;
+                    std::cout<<"Other Car Lane Round: "<<other_car_lane_round<<std::endl;
                     if((other_car_lane_round-1)==lane){
                         //the lane is on the left. close the left lane change
                         left_free = false;
@@ -334,6 +336,8 @@ int main() {
                 if(((other_car_s-future_car_s)>=20) && ((other_car_s-future_car_s)<50)){
                     //find which lane the other car is in
                     int other_car_lane_round = (int)other_car_lane/4;
+                    std::cout<<"oOther Car Lane: "<<other_car_lane<<std::endl;
+                    std::cout<<"oOther Car Lane Round: "<<other_car_lane_round<<std
                     if(((other_car_lane_round-1)==lane)){// && (other_car_v<ref_vel)){
                         //the lane is on the left. close the left lane change
                         left_free = false;
@@ -345,10 +349,10 @@ int main() {
                 }
 
           	}
-          	std::cout<<"Other Car Lane: "<<other_car_lane<<std::endl;
+          	//std::cout<<"Other Car Lane: "<<other_car_lane<<std::endl;
           	//if the counter is less than 11, then the lane has not been constant
           	//for 10 iterations. do not change lanes if requested
-          	if(counter<=40){
+          	if(counter<=100){
                 need_lane_change = false;
           	}
           	if((need_lane_change) && (left_free)){
@@ -574,7 +578,7 @@ int main() {
                 next_x_vals.push_back(spline_x);
                 next_y_vals.push_back(spline_y);
           	}
-          	*/
+          	*//*
           	//output the vector next_x_vals
           	std::cout<<"[";
           	for(int i=0;i<next_x_vals.size(); i++){
@@ -587,6 +591,8 @@ int main() {
                 std::cout<<next_y_vals[i]<<" , ";
           	}
           	std::cout<<" "<<endl;
+
+          	*/
 
 
           	/*//std::cout<<ptsx<<endl;
