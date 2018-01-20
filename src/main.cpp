@@ -307,6 +307,7 @@ int main() {
                 double other_car_v = sqrt(other_car_vx*other_car_vx+other_car_vy*other_car_vy);
                 //now that the velocity is found, predict where the car will be in
                 //points_to_push_back iterations
+                double other_car_s_now = other_car_s;
                 other_car_s = other_car_s + other_car_v*.02*points_to_push_back;
                 if(other_car_lane<(2+4*lane+2) && other_car_lane>(2+4*lane-2)){
                     //if the other car's s is greater than my vehicle's s and the distance
@@ -325,7 +326,7 @@ int main() {
                 //if the distance between the two vehicle's s values less than 10,
                 //and the other car's lane is to the left or right of the car's lane,
                 //then do not switch lanes
-                else if(std::abs(other_car_s-future_car_s)<20){
+                else if((std::abs(other_car_s-future_car_s)<20) || (std::abs(other_car_s_now-car_s)<20)){
                     //find which lane the other car is in
                     int other_car_lane_round = (int)other_car_lane/4;
                     //std::cout<<"Other Car Lane: "<<other_car_lane<<std::endl;
