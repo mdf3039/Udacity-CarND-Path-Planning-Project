@@ -303,7 +303,7 @@ int main() {
                     //if the other car's s is greater than my vehicle's s and the distance
                     //between them is under 30m, begin slowing down and preparation
                     //for a lane change
-                    if((other_car_s>future_car_s) && ((other_car_s-future_car_s)<20)){
+                    if((other_car_s>future_car_s) && ((other_car_s-future_car_s)<25)){
                         //change the no_near_cars boolean
                         no_near_cars = false;
                         //signal need for lane change
@@ -344,6 +344,7 @@ int main() {
                 }
 
           	}
+          	std::cout<<"Other Car Lane: "<<other_car_lane<<std::endl;
           	//if the counter is less than 11, then the lane has not been constant
           	//for 10 iterations. do not change lanes if requested
           	if(counter<=40){
