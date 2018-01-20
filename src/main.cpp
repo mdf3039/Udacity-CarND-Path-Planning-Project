@@ -317,32 +317,32 @@ int main() {
                 //if the distance between the two vehicle's s values less than 10,
                 //and the other car's lane is to the left or right of the car's lane,
                 //then do not switch lanes
-                if(std::abs(other_car_s-future_car_s)<20){
+                else if(std::abs(other_car_s-future_car_s)<20){
                     //find which lane the other car is in
                     int other_car_lane_round = (int)other_car_lane/4;
                     std::cout<<"Other Car Lane: "<<other_car_lane<<std::endl;
                     std::cout<<"Other Car Lane Round: "<<other_car_lane_round<<std::endl;
-                    if((other_car_lane_round-1)==lane){
+                    if((other_car_lane_round+1)==lane){
                         //the lane is on the left. close the left lane change
                         left_free = false;
                     }
-                    if((other_car_lane_round+1)==lane){
+                    if((other_car_lane_round-1)==lane){
                         //the lane is on the right. close the right lane change
                         right_free = false;
                     }
                 }
                 //if the car in the other lane are going slower than the car in
                 //the lane attempting to switch from, do not switch lanes
-                if(((other_car_s-future_car_s)>=20) && ((other_car_s-future_car_s)<50)){
+                else if(((other_car_s-future_car_s)>=20) && ((other_car_s-future_car_s)<50)){
                     //find which lane the other car is in
                     int other_car_lane_round = (int)other_car_lane/4;
                     std::cout<<"oOther Car Lane: "<<other_car_lane<<std::endl;
                     std::cout<<"oOther Car Lane Round: "<<other_car_lane_round<<std::endl;
-                    if(((other_car_lane_round-1)==lane)){// && (other_car_v<ref_vel)){
+                    if(((other_car_lane_round+1)==lane)){// && (other_car_v<ref_vel)){
                         //the lane is on the left. close the left lane change
                         left_free = false;
                     }
-                    if(((other_car_lane_round+1)==lane)){// && (other_car_v<ref_vel)){
+                    if(((other_car_lane_round-1)==lane)){// && (other_car_v<ref_vel)){
                         //the lane is on the right. close the right lane change
                         right_free = false;
                     }
@@ -382,6 +382,7 @@ int main() {
           	}
           	counter += 1;
           	std::cout<<"Reference Velocity: "<<ref_vel<<endl;
+          	std::cout<<"Lane: "<<lane<<endl;
 
 
           	json msgJson;
