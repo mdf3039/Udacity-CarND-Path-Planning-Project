@@ -257,7 +257,7 @@ int main() {
           	int prev_size = previous_path_x.size();
 
           	//number of points to push back
-          	int points_to_push_back = 10;
+          	int points_to_push_back = 5;
 
           	//use the predictions for where my car will be during that same time
           	double future_car_s;
@@ -409,6 +409,12 @@ int main() {
                 double n_x = previous_path_x[0];
                 //double theta = atan2(n_y-car_y,n_x-car_x);//deg2rad(car_yaw)
                 vector<double> sd = getFrenet(n_x, n_y, deg2rad(car_yaw), map_waypoints_x, map_waypoints_y);
+                //put the s and d points used in the ptss and ptsd. Also put the
+                //previous points for smoothness
+                double before_first_s = prev_s[50-prev_size+points_to_push_back-2];
+                double before_first_d = prev_d[50-prev_size+points_to_push_back-2];
+                ptss.push_back(before_first_s);
+                ptsd.push_back(before_first_d);
                 first_s = prev_s[50-prev_size+points_to_push_back-1];
                 first_d = prev_d[50-prev_size+points_to_push_back-1];
                 ptss.push_back(first_s);
@@ -427,7 +433,7 @@ int main() {
           	}
           	//use s and d to find the new path values
           	//In Frenet, add evenly dist_inc spaced points ahead of the starting reference
-          	double dist_inc = 20;
+          	double dist_inc = 30;
           	for(int i=0; i<3; i++){
                 double next_s = first_s+(i+1)*dist_inc;
                 double next_d = (2+4*lane);
